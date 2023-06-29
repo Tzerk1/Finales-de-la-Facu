@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRABAJO PRÁCTICO - Gafe</title>
+    <link rel="stylesheet" href=".css
+">
+
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-logo" href="index.html">
+                <a class="sobremi" href="sobremi.html">Sobri Mi</a>
+        </div>
+    </nav>
+
+    <h1>Finales de la Facu</h1>
+
+    <form>
+        <div>
+            <input type="text" id="materia" placeholder="Materia" required>
+        </div>
+
+        <div>
+            <select>
+                <option value="UNO">1</option>
+                <option value="DOS">2</option>
+                <option value="TRES">3</option>
+                <option value="CUATRO">4</option>
+                <option value="CINCO">5</option>
+                <option value="SEIS">6</option>
+                <option value="SIETE">7</option>
+                <option value="OCHO">8</option>
+                <option value="NUEVE">9</option>
+                <option value="DIEZ">10</option>
+            </select>
+        </div>
+
+        <div>
+            <input type="radio" value="Aprobado" id="Aprobado" name="aprobacion" required>
+            <label for="Aprobado">Aprobado</label>
+            <input type="radio" value="Desaprobado" id="Desaprobado" name="aprobacion" required>
+            <label for="Desaprobado">Desaprobado</label>
+
+        </div>
+
+        <div>
+            <input type="submit" value="REGISTRAR">
+        </div>
+    </form>
+
+    <div id="contenedor"></div>
+
+    <script src="js/code.jquery.com_jquery-3.7.0.js"></script>
+
+    <script>
+        $("form").on("submit", function (event) {
+            event.preventDefault();
+
+            let materia = $("#materia").val();
+            let nota = $('option:checked').val();
+            let aprobacion = $('input[type="radio"]:checked').val();
+            let nuevo_div = $("<div></div>");
+
+            nuevo_div.append(
+                `<h2>${materia}</h2>
+                 <p>${nota}</p>
+                 <p>${aprobacion}</p>
+                 <button class="borrar">x</button>`
+            ).addClass("datos");
+
+            $("form")[0].reset();
+            $("#contenedor").prepend(nuevo_div);
+
+
+            let datosGuardados = localStorage.getItem("datos") || "[]";
+            let datos = JSON.parse(datosGuardados);
+            datos.push({ trabajo, nota, aprobacion });
+            localStorage.setItem("datos", JSON.stringify(datos));
+        });
+
+        $(document).on("click", ".borrar", function () {
+            $(this).parent().remove();
+
+
+            let materia = $(this).siblings("h2").text();
+            let nota = $(this).siblings("p").eq(0).text();
+            let aprobacion = $(this).siblings("p").eq(1).text();
+
+            let datosGuardados = localStorage.getItem("datos");
+            if (datosGuardados) {
+                let datos = JSON.parse(datosGuardados);
+                let index = datos.findIndex(item => item.materia === materia && item.nota === nota && item.aprobacion === aprobacion);
+                if (index !== -1) {
+                    datos.splice(index, 1);
+                    localStorage.setItem("datos", JSON.stringify(datos));
+                }
+            }
+        });
+
+
+        let datosGuardados = localStorage.getItem("datos");
+        if (datosGuardados) {
+            let datos = JSON.parse(datosGuardados);
+            datos.forEach(({ materia, nota, aprobacion }) => {
+                let nuevoDiv = $("<div></div>").addClass("datos");
+                nuevoDiv.append(
+                    `<h2>${materia}</h2>
+                     <p>${nota}</p>
+                     <p>${aprobacion}</p>
+                     <button class="borrar">x</button>`
+                );
+                $("#contenedor").prepend(nuevoDiv);
+            });
+        }
+    </script>
+</body>
+
+</html>
